@@ -1,0 +1,82 @@
+.Tabbtns {
+    display: inline-flex;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin-right: 0.5rem;
+    font-size: 0.875rem;
+    font-family: var(--font-family);
+    line-height: 1.25rem;
+    font-weight: 500;
+    line-height: 1.25rem;
+    white-space: nowrap;
+    align-items: center;
+    border-bottom-width: 2px;
+    cursor: pointer;
+
+}
+
+.signupimg {
+    background-image: url('../Assets/Signupimg.jpg');
+    background-size: cover;
+    height: 215vh !important;
+    background-repeat: no-repeat;
+
+@media screen and (min-width:425px) and (max-width:768px)   {
+        background-image: url('../Assets/Signupimg.jpg');
+        background-size: cover;
+        height: 175vh !important;
+        background-repeat: no-repeat;
+}
+@media screen and (min-width:1024px)  {
+     
+        background-image: url('../Assets/Signupimg.jpg');
+        background-size: cover;
+        height: 155vh !important;
+        background-repeat: no-repeat;
+     }
+}
+.formlabel {
+    text-align: left !important;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: var(--font-family);
+  }
+  .inputtextfield {
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+.mainbtn {
+    border: 0px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-family: var(--font-family);
+    background-color: var(--btn-color);
+    color: white;
+    text-align: center;
+    padding: 5px 10px;
+
+    &:hover {
+      border: 1px solid var(--btn-color);
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--btn-color);
+      background-color: white;
+    }
+  }
+
+
+.comname {
+    padding: 10px !important;
+}

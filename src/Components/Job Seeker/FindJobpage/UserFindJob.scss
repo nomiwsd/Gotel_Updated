@@ -1,0 +1,124 @@
+
+.userfindjob{
+    background-color: #007456 !important;
+}
+.offcanvas {
+    position: fixed;
+    bottom: 0;
+    z-index: var(--bs-offcanvas-zindex);
+    display: flex;
+    flex-direction: column;
+    max-width: 70% !important;
+    color: var(--bs-offcanvas-color);
+    visibility: hidden;
+    background-color: var(--bs-offcanvas-bg);
+    background-clip: padding-box;
+    outline: 0;
+    transition: transform .3s ease-in-out;
+}
+.jobs-featured{
+    border: 1px solid black !important;
+}
+.btncl{
+    background-color:#007456 !important;
+    color:white !important;
+}
+
+
+    .mainheading {
+        font-family: var(--font-family);
+        font-size: 36px;
+        font-weight: 700;
+        color: white !important;
+        text-align: center !important;
+    }
+    .Maintext {
+        font-family: var(--font-family);
+        font-size: 16px;
+        font-weight: 300;
+        color: white !important;
+    }
+    
+    .searchbar .formgroup {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        background-color: #ffffff !important;
+        border: 1px solid black;
+    }
+    .searchinput{
+        border-top-left-radius: 50px;
+        border-bottom-left-radius: 50px;
+    }
+    .searchbar .rightgroup {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        background-color: #ffffff !important;
+        border-top-right-radius: 50px;
+        border-bottom-right-radius: 50px;
+        border: 1px solid black;
+    
+    }
+    .mainbtn {
+        border: 0px;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-family: var(--font-family);
+        background-color: var(--btn-color);
+        color: white;
+        text-align: center;
+        padding: 5px 10px;
+    
+        &:hover {
+          border: 1px solid var(--btn-color);
+          border-radius: 5px;
+          font-size: 16px;
+          font-weight: 600;
+          color: var(--btn-color);
+          background-color: white;
+        }
+      }
+    select.optionselect {
+        width: 100%;
+        z-index: 2;
+        border: 0 !important;
+        outline: none !important;
+    }
+    
+    select:focus {
+        border: 0 !important;
+        outline: none !important;
+    }
+    
+    .rightgroup a{
+        text-decoration: none !important;
+    }
+    .clearbtn {
+        color: var(--btn-color) !important;
+        background-color: transparent !important;
+        border: 0px !important;
+        width: 30%;
+        font-weight: 500;
+        font-size: 16px;
+        font-family: var(--font-family);
+    }
+    
+    .submitbtn {
+        display: inline-block;
+        background-color: var(--btn-color);
+        border: solid 1px var(--btn-color);
+        width: 50%;
+        color: #fff !important;
+        text-align: center !important;
+        transition: all .3s;
+        font-size: 16px;
+        padding: 0px 10px;
+        -webkit-border-radius: 3em;
+        -moz-border-radius: 3em;
+        border-radius: 3em;
+        font-weight: 500;
+        cursor: pointer;
+    }    
+    

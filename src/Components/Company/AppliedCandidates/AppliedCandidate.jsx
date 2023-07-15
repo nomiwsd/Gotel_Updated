@@ -1,0 +1,356 @@
+import React, { useState, useEffect } from 'react'
+import { FiExternalLink } from 'react-icons/fi'
+import { BsChevronRight } from 'react-icons/bs'
+import { AiOutlineDownload, AiOutlineMessage } from 'react-icons/ai'
+import SearchOutlinedIcon from "@material-ui/icons/SearchOutlined";
+import Select from 'react-select';
+import { HiOutlineDotsHorizontal } from 'react-icons/hi'
+import { BsPeopleFill } from 'react-icons/bs'
+import { MdWorkOutline, MdPostAdd } from 'react-icons/md'
+import { FaUserPlus } from 'react-icons/fa'
+import { BiMessageDetail } from 'react-icons/bi'
+import SettingsApplicationsIcon from "@material-ui/icons/SettingsApplications";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import { Link, useNavigate } from "react-router-dom";
+
+
+import { firestore, storage } from '../../../firebase';
+import { ref, getDownloadURL, uploadBytes } from "firebase/storage"
+import { setDoc, doc as Doc, getDocs, docR, getDoc, collection, deleteDoc, updateDoc } from "@firebase/firestore";
+
+
+import './AppliedCandidate.css'
+import CompanyNavbar from '../CompanyNavbar/CompanyNavbar';
+const JobCategoryOptions = [
+    { value: 'All', label: 'All' },
+    { value: 'Design & Creative', label: 'Design & Creative' },
+    { value: 'Development & IT', label: 'Development & IT' },
+];
+
+
+function AppliedCandidate() {
+    const navigate = useNavigate()
+    const [Jobs, setJobs] = useState([])
+    useEffect(() => {
+        var company = localStorage.getItem('user')
+        company = JSON.parse(company)
+        setUser(company)
+        fetchApplicantsDetails(company.uid)
+    }, [])
+    var [user, setUser] = useState({})
+    const [loading, setLoading] = useState(false)
+    const [published, setPublished] = useState(false)
+    const fetchApplicantsDetails = async (uid) => {
+        setJobs([])
+        await getDocs(collection(firestore, `jobs`))
+            .then((allJobs) => {
+                allJobs.docs
+                    .map(async (job) => {
+                        if (job.data().by === uid) {
+                            await getDocs(collection(firestore, `jobs/${job.id}/Applications`))
+                                .then(async (applicants) => {
+                                    applicants.docs.map(async (applicant) => {
+                                        await getDoc(Doc(firestore, `users/${applicant.id}`))
+                                            .then(async (profile) => {
+                                                var UserImg = await getDownloadURL(ref(storage, `images/${profile.id}/profile`))
+                                                setJobs((Jobs) => [...Jobs, { jobCategorie: job.data().jobCategorie, applicantid: applicant.id, id: job.id, img: UserImg, status: applicant.data(), job: job.data(), profile: profile.data() }])
+                                                
+                                            })
+                                    })
+                                })
+                        }
+                    });
+            })
+            .catch((e) => {
+                console.log(e)
+            })
+    }
+    const RejectJob = async (jobId, userid, index) => {
+        Jobs[index].status.status = 'Rejected'
+        setJobs((Jobs) => [...Jobs])
+        await updateDoc(Doc(firestore, `jobs/${jobId}/Applications/${userid}`), {
+            status: 'Rejected'
+        })
+            .then(async (e) => {
+
+                console.log('Rejected')
+            }
+            )
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+            });
+    }
+    const ApprovedJob = async (jobId, userid, index) => {
+        Jobs[index].status.status = 'Approved'
+        setJobs((Jobs) => [...Jobs])
+        await updateDoc(Doc(firestore, `jobs/${jobId}/Applications/${userid}`), {
+            status: 'Approved'
+        })
+            .then(async (e) => {
+                console.log('Approved')
+            }
+            )
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+            });
+    }
+    const addCanidateToChat = async (canidateUid) => {
+        await setDoc(Doc(firestore, `users/${user.uid}/chat/${canidateUid}`), {
+
+        })
+        navigate('/CompanyMessage')
+        
+    }
+    const [selectedOption, setSelectedOption] = useState({ value: 'All', label: 'All' });
+    const [search, setSearch] = useState('')
+    const [val, setVal] = useState("");
+    const onChange = (value) => {
+        console.log(value);
+        setVal(value);
+    };
+    return (
+        <div>
+            <div className="d-flex ">
+                <div className="d-none d-md-block col-md-3 col-lg-2 sidebar h-screen">
+                    <div className="sidebar" >
+                        <div className="top">
+                            <Link to="/" style={{ textDecoration: "none" }}>
+                                <span className="logo">GOTEL</span>
+                            </Link>
+                        </div>
+                        <hr />
+                        <div className="center">
+                            <ul>
+                                <Link to="/Company" style={{ textDecoration: "none" }}>
+                                    <li>
+                                        <BsPeopleFill className="icon fs-4" />
+                                        <span>Company Profile</span>
+                                    </li>
+                                </Link>
+                                <Link to="/Postjob" style={{ textDecoration: "none" }}>
+                                    <li>
+                                        <MdWorkOutline className="icon fs-4" />
+                                        <span>Post a Job</span>
+                                    </li>
+                                </Link>
+                                <Link to='/PostedJob' style={{ textDecoration: "none" }}>
+                                    <li>
+                                        <MdPostAdd className="icon fs-4" />
+                                        <span>Posted Jobs</span>
+                                    </li></Link>
+                                <Link to='/AppliedCandidate' style={{ textDecoration: "none" }}>
+                                    <li>
+                                        <FaUserPlus className="icon fs-4" />
+                                        <span>Applied Candidates</span>
+                                    </li></Link>
+                                <Link to='/CompanyMessage' style={{ textDecoration: "none" }}>   <li>
+                                    <BiMessageDetail className="icon fs-4" />
+                                    <span>Messages</span>
+                                </li>
+                                </Link>
+                                <Link to='/CompanySettingspage' style={{ textDecoration: "none" }}> <li>
+                                    <SettingsApplicationsIcon className="icon fs-4" />
+                                    <span>Settings</span>
+                                </li></Link>
+                                <Link to='/Login' style={{ textDecoration: "none" }}> <li>
+                                    <ExitToAppIcon className="icon fs-4" />
+                                    <span>Logout</span>
+                                </li></Link>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-12 col-md-9 col-lg-10 h-100"><CompanyNavbar />
+                    <div className="bg-color px-3 py-2">
+                        <div class="entry-title d-flex my-2">
+                            <h4>Manage Jobs</h4>
+                        </div>
+                        <div className="row d-flex m-0 p-0">
+                            <div className="col-4">
+                                <Select
+                                    defaultValue={selectedOption}
+                                    onChange={setSelectedOption}
+                                    options={JobCategoryOptions}
+                                    classNames='categoryselect'
+                                /></div>
+                            <div className=" searchdiv d-none d-md-flex col-3 border-1 rounded-1 p-0">
+
+                                <input type="text" placeholder="Find By Job" className='px-2 w-100 searchinput' value={search} onChange={(e) => { setSearch(e.target.value) }} />
+                                <SearchOutlinedIcon className='fs-3 mt-2 searchicon' />
+                            </div>
+
+                        </div>
+                        <div className="table my-5">
+                            <div class="table-dashboard-wapper mx-2">
+                                <table class="table-dashboard" id="my-jobs">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Status</th>
+                                            <th>Information</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            Jobs.map(({ applicantid, id, img, job, profile, status }, index) => {
+                                                if (selectedOption.value == 'All') {
+                                                    if (job.jobTitle.includes(search)) {
+                                                        return (
+                                                            <tr>
+                                                                <td class="info-user">
+                                                                    <div class="image-applicants"><img class="image-candidates object-cover" src={img} alt="" /></div>
+                                                                    <div class="info-details mx-1">
+                                                                        <h3><a href="">{profile.Name}</a></h3>
+                                                                        <div class="applied d-flex">Applied:                                        <a href="">
+                                                                            <div className="d-flex mt-1">   <span>{job.jobTitle}</span>
+                                                                                <FiExternalLink className='fs-5 text-dark' />
+                                                                            </div></a>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="status">
+                                                                    <div class="approved">
+                                                                        <span class="label label-close">{status.status}</span>                                <span class="applied-time">Applied:{status.data}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="info">
+                                                                    <span class="gmail">{profile.email}</span>
+                                                                    <span class="phone">{profile.ph}</span>
+                                                                </td>
+                                                                <td class="applicants-control action-setting">
+                                                                    <div class="list-action d-flex ">
+                                                                        <a href="" class="action icon-video btn-reschedule-meetings mx-2" data-id="7761" data-title="Video"> <AiOutlineDownload className='fs-4 text-dark' /> </a>
+                                                                        <a onClick={() => {
+                                                                            addCanidateToChat(applicantid)
+                                                                        }} class="action icon-video btn-reschedule-meetings" data-id="7761" data-title="Video">
+                                                                            <AiOutlineMessage className='fs-4 text-dark' />
+                                                                        </a>
+                                                                        <div class="actiondiv mx-2">
+                                                                            <div class="btn-group dropend">
+                                                                                <button type="button" className="editdelete" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                                    <HiOutlineDotsHorizontal />
+                                                                                </button>
+                                                                                <ul class="dropdown-menu dropdownmenu">
+                                                                                    <li><a class="dropdown-item" href="#sf" onClick={() => {
+                                                                                        ApprovedJob(id, applicantid, index)
+                                                                                    }}>Approved</a></li>
+                                                                                    <li><a class="dropdown-item" href="#sf" onClick={() => {
+                                                                                        RejectJob(id, applicantid, index)
+                                                                                    }}>Rejected</a></li>
+
+                                                                                </ul>
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    }
+                                                }
+                                                if(selectedOption != null){
+                                                    if (selectedOption.value === job.jobCategorie) {
+                                                        if (job.jobTitle.includes(search)) {
+                                                            return (
+                                                                <tr>
+                                                                    <td class="info-user">
+                                                                        <div class="image-applicants"><img class="image-candidates object-cover" src={img} alt="" /></div>
+                                                                        <div class="info-details mx-1">
+                                                                            <h3><a href="">{profile.Name}</a></h3>
+                                                                            <div class="applied d-flex">Applied:                                        <a href="#sd">
+                                                                                <div className="d-flex mt-1">   <span>{job.jobTitle}</span>
+                                                                                    <FiExternalLink className='fs-5 text-dark' />
+                                                                                </div></a>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="status">
+                                                                        <div class="approved">
+                                                                            <span class="label label-close">{status.status}</span>                                <span class="applied-time">Applied:{status.data}</span>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="info">
+                                                                        <span class="gmail">{profile.email}</span>
+                                                                        <span class="phone">{profile.ph}</span>
+                                                                    </td>
+                                                                    <td class="applicants-control action-setting">
+                                                                        <div class="list-action d-flex ">
+                                                                            <a href="#rfd" class="action icon-video btn-reschedule-meetings mx-2" data-id="7761" data-title="Video"> <AiOutlineDownload className='fs-4 text-dark' /> </a>
+                                                                            <a onClick={() => {
+                                                                                addCanidateToChat(applicantid)
+                                                                            }} class="action icon-video btn-reschedule-meetings" data-id="7761" data-title="Video">
+                                                                                <AiOutlineMessage className='fs-4 text-dark' />
+                                                                            </a>
+                                                                            <div class="actiondiv mx-2">
+                                                                                <div class="btn-group dropend">
+                                                                                    <button type="button" className="editdelete" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                                        <HiOutlineDotsHorizontal />
+                                                                                    </button>
+                                                                                    <ul class="dropdown-menu dropdownmenu">
+                                                                                        <li><a class="dropdown-item" href="#sf" onClick={() => {
+                                                                                            ApprovedJob(id, applicantid, index)
+                                                                                        }}>Approved</a></li>
+                                                                                        <li><a class="dropdown-item" href="#sf" onClick={() => {
+                                                                                            RejectJob(id, applicantid, index)
+                                                                                        }}>Rejected</a></li>
+    
+                                                                                    </ul>
+                                                                                </div>
+    
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                            })
+                                        }
+
+                                      
+                                    </tbody>
+                                </table>
+                                <div class="pagination-dashboard">
+
+                                    <div class="civi-pagination dashboard" data-type="number">
+                                        <div class="items-pagination" data-max-number="11">
+                                            <select class="search-control select-pagination nice-select" name="item_amount" data-value="1">
+                                                <option value="10" selected="">10</option>
+                                                <option value="20">20</option>
+                                                <option value="30">30</option>
+                                            </select>
+
+                                            <label class="text-pagination">
+                                                <span class="num-first">1</span> - <span class="num-last">10</span> of <span class="num-total">11</span> items        </label></div>
+
+                                        <div class="pagination">
+
+
+                                            <span class="page-numbers current">1</span>
+
+                                            <a class="page-numbers" href="#gfd">2</a>
+
+                                            <a class="next page-numbers" href="#gh"><BsChevronRight /></a>
+
+                                        </div>
+
+
+                                        
+                                    </div>        </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export default AppliedCandidate

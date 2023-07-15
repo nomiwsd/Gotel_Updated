@@ -1,0 +1,94 @@
+.navbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    color: #555;
+    border-bottom:1px solid black ;
+    padding: 4px 0px !important;
+   .wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .items {
+        display: flex; 
+        justify-content: center;
+        align-items: center;
+        .item {
+            display: flex;
+      justify-content: center;
+            align-items: center;
+            margin-right: 20px;
+            position: relative;
+            .icon {
+                font-size: 20px;
+              }
+              .avatar {
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+              }
+          }
+          
+        }        
+      
+    .search {
+        display: flex;
+        align-items: center;
+        border: 0.5px solid lightgray;
+        padding: 3px;
+        border-radius: 20px;
+       input {
+        border: none;
+        outline: none;
+        background: transparent;
+      
+      &::placeholder {
+        font-size: 12px;
+      }}
+      
+  }
+}}
+  .topheading {
+    color: #007456;
+    font-size: 18px;
+    font-family: var(--font-family);
+    font-weight: 600;
+  }
+  .counter {
+    width: 15px;
+    height: 15px;
+    background-color: red;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    position: absolute;
+    top: -5px;
+  
+  }
+  
+  .modal-backdrop,
+  .smoffcannvas {
+    width: 70vw !important;
+    height: 100vh !important;
+    background-color: var(--background-color) !important;
+  }
+  
+  .smoffcannvas::-webkit-scrollbar {
+    width: 0 !important;
+  }
+  
+  .Jobpostbtn {
+    border-radius: 20px;
+    background-color: #007456;
+    color: white !important;
+    text-decoration: none;
+    font-size: 10px;
+    font-family: var(--font-family);
+    font-weight: 700;
+  }
